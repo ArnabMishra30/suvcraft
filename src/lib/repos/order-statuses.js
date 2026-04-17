@@ -1,0 +1,1 @@
+export const ORDER_STATUSES = ['received', 'processed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled', 'returned'];
