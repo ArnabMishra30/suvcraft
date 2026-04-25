@@ -48,7 +48,16 @@ const NAV = [
       { href: '/admin/brands/bulk-upload', label: 'Bulk Upload' },
     ],
   },
-  { href: '/admin/customers', label: 'Customers', icon: 'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-5.13a4 4 0 11-8 0 4 4 0 018 0zm6 0a4 4 0 11-8 0 4 4 0 018 0z' },
+  {
+    label: 'Customers',
+    icon: 'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-5.13a4 4 0 11-8 0 4 4 0 018 0zm6 0a4 4 0 11-8 0 4 4 0 018 0z',
+    children: [
+      { href: '/admin/customers', label: 'View Customers' },
+      { href: '/admin/customers/addresses', label: 'Addresses' },
+      { href: '/admin/customers/transactions', label: 'Transactions' },
+      { href: '/admin/customers/wallet', label: 'Wallet Transactions' },
+    ],
+  },
   {
     label: 'Sellers',
     icon: 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z',
@@ -57,7 +66,23 @@ const NAV = [
       { href: '/admin/sellers/wallet', label: 'Wallet Transactions' },
     ],
   },
-  { href: '/admin/delivery-boys', label: 'Delivery Boys', icon: 'M3 8l4-4 4 4M7 4v12m0 0l4 4 4-4m6-12v12' },
+  {
+    label: 'Return Requests',
+    icon: 'M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6',
+    children: [
+      { href: '/admin/return-requests', label: 'Manage Return Requests' },
+      { href: '/admin/return-requests/reasons', label: 'Reasons For Return' },
+    ],
+  },
+  {
+    label: 'Delivery Boys',
+    icon: 'M3 8l4-4 4 4M7 4v12m0 0l4 4 4-4m6-12v12',
+    children: [
+      { href: '/admin/delivery-boys', label: 'Manage Delivery Boys' },
+      { href: '/admin/delivery-boys/cash-collection', label: 'Manage Cash Collection' },
+      { href: '/admin/delivery-boys/fund-transfer', label: 'Fund Transfer' },
+    ],
+  },
   { href: '/admin/settings', label: 'Settings', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z' },
 ];
 

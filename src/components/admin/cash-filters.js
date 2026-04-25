@@ -1,0 +1,76 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import DateRangePicker from './date-range-picker';
+
+export default function CashFilters() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+  const [draft, setDraft] = useState({
+    from: params.get('from') || '',
+    to: params.get('to') || '',
+    status: params.get('status') || '',
+  });
+
+  useEffect(() => {
+    setDraft({
+      from: params.get('from') || '',
+      to: params.get('to') || '',
+      status: params.get('status') || '',
+    });
+  }, [params]);
+
+  function update(k, v) { setDraft((d) => ({ ...d, [k]: v })); }
+
+  function apply() {
+    const sp = new URLSearchParams(params);
+    for (const [k, v] of Object.entries(draft)) {
+      if (v) sp.set(k, v); else sp.delete(k);
+    }
+    sp.delete('page');
+    router.push(`${pathname}?${sp.toString()}`);
+  }
+
+  function reset() {
+    setDraft({ from: '', to: '', status: '' });
+    router.push(pathname);
+  }
+
+  const inputCls = 'block w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500';
+  const labelCls = 'block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1';
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+        <div className="sm:col-span-2">
+          <label className={labelCls}>Date and time range:</label>
+          <DateRangePicker
+            from={draft.from}
+            to={draft.to}
+            onChange={({ from, to }) => setDraft((d) => ({ ...d, from, to }))}
+          />
+        </div>
+        <div>
+          <label className={labelCls}>Filter By Status</label>
+          <select value={draft.status} onChange={(e) => update('status', e.target.value)} className={inputCls}>
+            <option value="">Select Status</option>
+            <option value="received">Delivery Boy Cash Received</option>
+            <option value="collected">Cash Collected by Admin</option>
+          </select>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <button type="button" onClick={apply} className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 px-5 py-2 text-sm font-semibold text-white">
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+          Filter
+        </button>
+        <button type="button" onClick={reset} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-5 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v6h6M20 20v-6h-6M4 10a8 8 0 0114-5m2 9a8 8 0 01-14 5" /></svg>
+          Reset
+        </button>
+      </div>
+    </div>
+  );
+}
