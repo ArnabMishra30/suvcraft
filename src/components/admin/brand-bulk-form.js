@@ -1,0 +1,94 @@
+'use client';
+
+import { useRef, useState } from 'react';
+
+export default function BrandBulkForm() {
+  const [type, setType] = useState('upload');
+  const [file, setFile] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState(null);
+  const [err, setErr] = useState('');
+  const fileRef = useRef(null);
+
+  function reset() {
+    setType('upload'); setFile(null); setResult(null); setErr('');
+    if (fileRef.current) fileRef.current.value = '';
+  }
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    setErr(''); setResult(null);
+    if (!file) { setErr('Please choose a CSV file.'); return; }
+    setBusy(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('type', type);
+      const res = await fetch('/api/admin/brands/bulk-upload', { method: 'POST', body: fd });
+      const json = await res.json();
+      if (json.error) { setErr(json.message || 'Upload failed.'); return; }
+      setResult(json.data);
+    } catch {
+      setErr('Network error.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const inputCls = 'block w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500';
+  const labelCls = 'block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1';
+
+  return (
+    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+      <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800">
+        <h2 className="text-sm font-semibold text-slate-900 dark:text-white inline-flex items-center gap-2">
+          <svg className="w-4 h-4 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" /></svg>
+          Bulk Upload / Download
+        </h2>
+      </div>
+      <form onSubmit={onSubmit} className="p-5 space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+          <div>
+            <label className={labelCls}>Type <span className="text-slate-400">[upload/update]</span> <span className="text-red-500">*</span></label>
+            <select value={type} onChange={(e) => setType(e.target.value)} className={inputCls}>
+              <option value="upload">Upload (create new brands)</option>
+              <option value="update">Update (modify existing)</option>
+            </select>
+          </div>
+          <div className="sm:col-span-2">
+            <label className={labelCls}>File <span className="text-red-500">*</span></label>
+            <input ref={fileRef} type="file" accept=".csv,text/csv" onChange={(e) => setFile(e.target.files?.[0] || null)} className="block w-full text-sm text-slate-700 dark:text-slate-300 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border file:border-slate-300 dark:file:border-slate-700 file:bg-slate-100 dark:file:bg-slate-800 file:text-slate-700 dark:file:text-slate-300 file:font-medium hover:file:bg-slate-200 dark:hover:file:bg-slate-700 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950" />
+          </div>
+        </div>
+        {err && <div className="rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 px-3 py-2 text-sm text-red-700 dark:text-red-300">{err}</div>}
+        {result && (
+          <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 px-3 py-3 text-sm text-emerald-800 dark:text-emerald-200 space-y-2">
+            <div className="font-medium">
+              {result.kind === 'upload'
+                ? `${result.created} of ${result.total} brand(s) created.`
+                : `${result.updated} of ${result.total} brand(s) updated.`}
+            </div>
+            {result.errors?.length > 0 && (
+              <details>
+                <summary className="cursor-pointer text-amber-700 dark:text-amber-300">{result.errors.length} row(s) had errors</summary>
+                <ul className="mt-2 list-disc pl-5 text-xs text-amber-800 dark:text-amber-200 space-y-0.5 max-h-48 overflow-y-auto">
+                  {result.errors.map((er, i) => <li key={i}>Row {er.row}: {er.message}</li>)}
+                </ul>
+              </details>
+            )}
+          </div>
+        )}
+        <div className="flex justify-end gap-2">
+          <button type="button" onClick={reset} className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v6h6M20 20v-6h-6M4 10a8 8 0 0114-5m2 9a8 8 0 01-14 5" /></svg>
+            Reset
+          </button>
+          <button type="submit" disabled={busy} className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 px-5 py-2 text-sm font-semibold text-white shadow-sm disabled:opacity-60">
+            {busy ? 'Uploading…' : 'Submit'}
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
