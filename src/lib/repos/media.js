@@ -10,7 +10,26 @@ export function mediaUrl(row) {
   return `/${sub}/${name}`.replace(/\/+/g, '/');
 }
 
-export async function listMedia({ page = 1, perPage = 20, search = '', kind = '' } = {}) {
+export const MEDIA_KIND_EXTENSIONS = {
+  image: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg'],
+  audio: ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac'],
+  video: ['mp4', 'webm', 'ogv', 'mov', 'avi', 'mkv'],
+  archive: ['zip', 'rar', '7z', 'tar', 'gz'],
+  spreadsheet: ['xls', 'xlsx', 'csv', 'ods'],
+  document: ['pdf', 'doc', 'docx', 'txt', 'odt', 'rtf', 'md'],
+};
+
+function kindWhereClause(kind) {
+  const exts = MEDIA_KIND_EXTENSIONS[kind];
+  if (!exts) return null;
+  const placeholders = exts.map(() => '?').join(',');
+  if (kind === 'image' || kind === 'video') {
+    return { sql: `(LOWER(type) = ? OR LOWER(extension) IN (${placeholders}))`, params: [kind, ...exts] };
+  }
+  return { sql: `LOWER(extension) IN (${placeholders})`, params: exts };
+}
+
+export async function listMedia({ page = 1, perPage = 20, search = '', kind = '', from = '', to = '' } = {}) {
   const where = [];
   const params = [];
   if (search) {
@@ -19,8 +38,10 @@ export async function listMedia({ page = 1, perPage = 20, search = '', kind = ''
     const like = `%${search}%`;
     params.push(idGuess, like, like);
   }
-  if (kind === 'image') where.push("type IN ('image','jpg','jpeg','png','gif','webp','avif','svg')");
-  else if (kind === 'video') where.push("type IN ('video','mp4','webm','ogg','mov')");
+  const k = kindWhereClause(kind);
+  if (k) { where.push(k.sql); params.push(...k.params); }
+  if (from) { where.push('date_created >= ?'); params.push(`${from} 00:00:00`); }
+  if (to) { where.push('date_created <= ?'); params.push(`${to} 23:59:59`); }
 
   const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
   const offset = Math.max(0, (Number(page) - 1) * Number(perPage));
@@ -44,6 +65,15 @@ export async function listMedia({ page = 1, perPage = 20, search = '', kind = ''
     perPage: limit,
     totalPages: Math.max(1, Math.ceil(Number(count[0].c) / limit)),
   };
+}
+
+export async function bulkDeleteMedia(ids = []) {
+  const list = ids.map((n) => Number(n)).filter((n) => Number.isFinite(n) && n > 0);
+  if (!list.length) return { rows: [], count: 0 };
+  const placeholders = list.map(() => '?').join(',');
+  const rows = await query(`SELECT * FROM media WHERE id IN (${placeholders})`, list);
+  const r = await query(`DELETE FROM media WHERE id IN (${placeholders})`, list);
+  return { rows, count: r.affectedRows || 0 };
 }
 
 export async function insertMedia({ seller_id = 0, title, name, extension, type, sub_directory, size }) {

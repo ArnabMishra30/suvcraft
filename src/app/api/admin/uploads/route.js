@@ -10,9 +10,21 @@ const UPLOAD_BASE = process.env.UPLOAD_DIR || 'C:/xampp/htdocs/ecommerce/uploads
 
 const ALLOWED = {
   image: { exts: new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.svg']), max: 10 * 1024 * 1024, folder: 'media', type: 'image' },
-  video: { exts: new Set(['.mp4', '.webm', '.ogg', '.mov']), max: 100 * 1024 * 1024, folder: 'videos', type: 'video' },
-  any: { exts: null, max: 50 * 1024 * 1024, folder: 'files', type: 'file' },
+  audio: { exts: new Set(['.mp3', '.wav', '.ogg', '.m4a', '.flac', '.aac']), max: 50 * 1024 * 1024, folder: 'audio', type: 'audio' },
+  video: { exts: new Set(['.mp4', '.webm', '.ogv', '.mov', '.avi', '.mkv']), max: 200 * 1024 * 1024, folder: 'videos', type: 'video' },
+  archive: { exts: new Set(['.zip', '.rar', '.7z', '.tar', '.gz']), max: 200 * 1024 * 1024, folder: 'archives', type: 'archive' },
+  spreadsheet: { exts: new Set(['.xls', '.xlsx', '.csv', '.ods']), max: 50 * 1024 * 1024, folder: 'spreadsheets', type: 'spreadsheet' },
+  document: { exts: new Set(['.pdf', '.doc', '.docx', '.txt', '.odt', '.rtf', '.md']), max: 50 * 1024 * 1024, folder: 'documents', type: 'document' },
+  any: { exts: null, max: 200 * 1024 * 1024, folder: 'files', type: 'file' },
 };
+
+function detectKind(ext) {
+  for (const [k, cfg] of Object.entries(ALLOWED)) {
+    if (k === 'any') continue;
+    if (cfg.exts?.has(ext)) return k;
+  }
+  return 'any';
+}
 
 export async function POST(req) {
   const auth = await requireRole(['admin']);
@@ -24,9 +36,10 @@ export async function POST(req) {
   const file = fd.get('file');
   if (!file || typeof file === 'string') return fail('No file uploaded.', 422);
 
-  const kind = String(fd.get('kind') || 'image');
-  const cfg = ALLOWED[kind] || ALLOWED.any;
   const ext = path.extname(file.name || '').toLowerCase();
+  const requestedKind = String(fd.get('kind') || '');
+  const kind = requestedKind || detectKind(ext);
+  const cfg = ALLOWED[kind] || ALLOWED.any;
   if (cfg.exts && !cfg.exts.has(ext)) return fail(`Unsupported file type ${ext}.`, 415);
   if (file.size > cfg.max) return fail(`File too large (max ${Math.round(cfg.max / 1024 / 1024)}MB).`, 413);
 
