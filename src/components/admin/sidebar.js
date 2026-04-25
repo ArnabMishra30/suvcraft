@@ -31,7 +31,15 @@ const NAV = [
       { href: '/admin/products/ratings', label: 'Product Ratings' },
     ],
   },
-  { href: '/admin/categories', label: 'Categories', icon: 'M4 6h16M4 12h16M4 18h7' },
+  {
+    label: 'Categories',
+    icon: 'M4 6h16M4 12h16M4 18h7',
+    children: [
+      { href: '/admin/categories', label: 'Manage Categories' },
+      { href: '/admin/categories/order', label: 'Category Order' },
+      { href: '/admin/categories/bulk-upload', label: 'Bulk Upload' },
+    ],
+  },
   { href: '/admin/brands', label: 'Brands', icon: 'M7 7h.01M7 3h5a1.99 1.99 0 011.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z' },
   { href: '/admin/customers', label: 'Customers', icon: 'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-5.13a4 4 0 11-8 0 4 4 0 018 0zm6 0a4 4 0 11-8 0 4 4 0 018 0z' },
   { href: '/admin/sellers', label: 'Sellers', icon: 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z' },
