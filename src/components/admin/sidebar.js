@@ -146,6 +146,10 @@ const NAV = [
       { href: '/admin/settings/notifications', label: 'Notification Settings' },
       { href: '/admin/settings/sms-gateway', label: 'SMS Gateway Settings' },
       { href: '/admin/settings/contact-us', label: 'Contact Us' },
+      { href: '/admin/settings/api-keys', label: 'API Keys' },
+      { href: '/admin/settings/system-updater', label: 'System Updater' },
+      { href: '/admin/settings/system-registration', label: 'System Registration' },
+      { href: '/admin/settings/faq', label: 'FAQ' },
     ],
   },
   {
