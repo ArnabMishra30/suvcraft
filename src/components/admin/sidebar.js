@@ -145,6 +145,7 @@ const NAV = [
       { href: '/admin/settings/authentication', label: 'Authentication Mode' },
       { href: '/admin/settings/notifications', label: 'Notification Settings' },
       { href: '/admin/settings/sms-gateway', label: 'SMS Gateway Settings' },
+      { href: '/admin/settings/contact-us', label: 'Contact Us' },
     ],
   },
   {
