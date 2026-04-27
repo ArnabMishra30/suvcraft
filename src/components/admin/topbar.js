@@ -39,6 +39,7 @@ export default function Topbar({ user, onMenuClick }) {
       <div className="relative">
         <button
           type="button"
+          suppressHydrationWarning
           onClick={() => setMenuOpen((v) => !v)}
           className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
         >
