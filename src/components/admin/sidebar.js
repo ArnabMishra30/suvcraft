@@ -156,7 +156,21 @@ const NAV = [
     label: 'Web Settings',
     icon: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
     children: [
+      { href: '/admin/web-settings/general', label: 'General Settings' },
+      { href: '/admin/web-settings/themes', label: 'Themes' },
+      { href: '/admin/web-settings/languages', label: 'Languages' },
       { href: '/admin/web-settings/firebase', label: 'Firebase' },
+    ],
+  },
+  { href: '/admin/policies', label: 'Policies', icon: 'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z' },
+  {
+    label: 'Affiliate System',
+    icon: 'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1',
+    children: [
+      { href: '/admin/affiliate', label: 'Dashboard' },
+      { href: '/admin/affiliate/users', label: 'Affiliate Users' },
+      { href: '/admin/affiliate/settings', label: 'Settings' },
+      { href: '/admin/affiliate/terms', label: 'Terms & Policies' },
     ],
   },
 ];
