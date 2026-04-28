@@ -1,0 +1,3 @@
+id,zipcode,city_id,minimum_free_delivery_order_amount,delivery_charges
+19,380001,1,550,40
+20,380002,61,999,60
